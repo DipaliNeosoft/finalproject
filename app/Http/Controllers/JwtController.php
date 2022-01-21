@@ -23,6 +23,7 @@ use App\Models\Wishlist;
 use App\Mail\registerMailToUser;
 use App\Mail\registerMailToAdmin;
 use App\Mail\orderMailToUser;
+use App\Mail\orderMailToAdmin;
 use Illuminate\Support\Facades\Mail; 
 
 
@@ -293,7 +294,7 @@ class JwtController extends Controller
         $validator=Validator::make($request->all(),[
             'firstname'=>'required|min:2|alpha',
             'lastname'=>'required|min:2|alpha',
-            'email'=>'required|unique:users|email',
+            'email'=>'required|email',
         ]);
         if($validator->fails()){
             return response()->json($validator->errors());
@@ -348,6 +349,12 @@ class JwtController extends Controller
         $validator=Validator::make($request->all(),[
             'user_id'=>'required',
             'address'=>'required',
+            'fullname'=>'required',
+            'email'=>'required|email|unique:user_addresses',
+            'state'=>'required',
+            'mobile'=>'required',
+            'pincode'=>'required',
+            'city'=>'required'
         ]);
         if($validator->fails()){
             return response()->json($validator->errors());
@@ -356,6 +363,13 @@ class JwtController extends Controller
             $user=UserAddress::create([
                 'user_id'=>$request->user_id,
                 'address'=>$request->address,
+                'fullname'=>$request->fullname,
+            'email'=>$request->email,
+            'state'=>$request->state,
+            'mobile'=>$request->mobile,
+            'pincode'=>$request->pincode,
+            'city'=>$request->city
+
             ]);
 
             return response()->json([
@@ -390,11 +404,17 @@ class JwtController extends Controller
             $order=Order::where('id',$request->order_id)->first();
             $user=User::where('id',$order->user_id)->first();
             $userMail=$user->email;
-            $pro=Product::where('id',$request->product_id)->first();
+            // $pro=Product::where('id',$request->product_id)->first();
+            // $pro=UserAddress::where('id',$order->address_id)->first();
+            $pro=Order::join('user_addresses','user_addresses.id','=','orders.address_id')->
+    join('order_products','order_products.order_id','=','orders.id')->join('products','products.id','=','order_products.product_id')
+    ->first();
             Mail::to($userMail)->send(new orderMailToUser($pro));
+            // Mail::to('admin@gmail.com')->send(new orderMailToAdmin($pro));
             return response()->json([
                 'error'=>0,
-                'orderproduct'=>$orderproduct
+                'orderproduct'=>$orderproduct,
+                'pro'=>$pro
             ]);
     }
     public function usedCoupon(Request $request){
@@ -411,11 +431,12 @@ class JwtController extends Controller
     }
    public function  getOrderDetails($id){
     $orders=Order::join('user_addresses','orders.address_id','=','user_addresses.id')->
-    join('order_products','orders.id','order_products.order_id')->join('products','products.id','=','order_products.product_id')->select('orders.id as oid','orders.amount as amount','user_addresses.*','order_products.product_id','products.*','order_products.id as OPid','order_products.quantity as quantity','orders.status as status')->where('orders.user_id',$id)->get();
-    $user=User::where('id',$id)->first();
-    return response()->json(['orders'=>$orders, 'firstname'=>$user->firstname,
-        'lastname'=>$user->lastname,
-        'email'=>$user->email,]);
+    join('order_products','orders.id','order_products.order_id')
+    ->join('products','products.id','=','order_products.product_id')->
+    select('orders.id as oid','orders.amount as amount','user_addresses.*','order_products.product_id',
+    'products.*','order_products.id as OPid','order_products.quantity as quantity','orders.status as status','order_products.total_price as total_price')->
+    where('orders.user_id',$id)->get();
+    return response()->json(['orders'=>$orders ]);
 
     }
 

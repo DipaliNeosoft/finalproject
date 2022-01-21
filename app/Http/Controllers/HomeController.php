@@ -92,9 +92,8 @@ class HomeController extends Controller
     {
    $fileName = 'Orders.csv';
 //    $tasks=Order::join('user_addresses','orders.address_id','=','user_addresses.id')->get();
-  $tasks=Order::join('user_addresses','orders.address_id','=','user_addresses.id')->
-    join('order_products','orders.id','=','order_products.order_id')
-    ->join('users','users.id','=','orders.user_id')
+  $tasks=Order::join('user_addresses','user_addresses.id','=','orders.address_id')->
+    join('order_products','order_products.order_id','=','orders.id')
     ->get();
         $headers = array(
             "Content-type"        => "text/csv",
@@ -104,7 +103,7 @@ class HomeController extends Controller
             "Expires"             => "0",
         );
 
-        $columns = array('Id', 'First Name', 'Last Name' ,'email','address','amount','status');
+        $columns = array('Id','Fullname','Email','Address','City','State','Pincode','Mobile','Amount','Status');
 
         $callback = function() use($tasks, $columns) {
             $file = fopen('php://output', 'w');
@@ -112,13 +111,18 @@ class HomeController extends Controller
 
             foreach ($tasks as $task) {
                 $row['Id']  = $task->order_id;
-                $row['First Name']    = $task->firstname;
-                $row['Last Name']    = $task->lastname;
-                $row['email']  = $task->email;
-                $row['address']    = $task->address;
-                $row['amount']=$task->amount;
-                $row['status']=$task->status;
-                fputcsv($file, array($row['Id'], $row['First Name'],$row['Last Name'],$row['email'],$row['address'],$row['amount'],$row['status'] ));
+                $row['Fullname']    = $task->fullname;
+                $row['Email']  = $task->email;
+                $row['Address']    = $task->address;
+                $row['City']    = $task->city;
+                $row['State']    = $task->state;
+                $row['Pincode']    = $task->pincode;
+                $row['Mobile']    = $task->mobile;
+                $row['Amount']=$task->amount;
+                $row['Status']=$task->status;
+                fputcsv($file, array($row['Id'], $row['Fullname'],$row['Email'],$row['Address'],$row['City'],
+                $row['State']  , $row['Pincode'],$row['Mobile']  ,
+                $row['Amount'],$row['Status'] ));
             }
 
             fclose($file);

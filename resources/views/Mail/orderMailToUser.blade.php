@@ -9,12 +9,29 @@
 <body>
    <h1>Order Placed Successfully!!</h1>
     <table class="table">
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <td>{{$product_name}}</td>
-        </tr>
-      </tbody>
-    </table>
+      <tr>
+    <th>Product name</th>
+    <td>{{$product_name}}</td>
+    </tr>
+    <tr>
+      <th>Full name</th>
+      <td>{{$name}}</td>
+    </tr>
+    <tr>
+      <th>Address</th>
+      <td>Address: {{$address}} <br> State: {{$state}} <br> City: {{$city}} <br> Pincode: {{$pincode}} </td>
+    </tr>
+    <tr><th>Mobile number</th>
+  <td>{{$mobile}}</td>
+  </tr>
+    <tr>
+      <th>total</th>
+      <td>
+       RS. {{$amount}}
+</td>
+    </tr>
+   
+  </tbody>
+</table>
 </body>
 </html>

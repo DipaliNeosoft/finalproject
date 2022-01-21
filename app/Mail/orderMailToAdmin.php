@@ -30,6 +30,15 @@ class orderMailToUser extends Mailable
     public function build()
     {
         $data=$this->data;
-        return $this->from('example@example.com', 'Example')->view('Mail.orderMailToUser')->with(['product_name'=>$data['pname']]);
+        return $this->from('example@example.com', 'Example')->view('Mail.orderMailToUser')
+        ->with(
+            ['name'=>$data['fullname'],
+            'mobile'=>$data['mobile'],
+            'address'=>$data['address'],
+            'state'=>$data['state'],
+            'pincode'=>$data['pincode'],
+            'city'=>$data['city'],
+            'product_name'=>$data['pname'],
+            'amount'=>$data['amount']]);
     }
 }

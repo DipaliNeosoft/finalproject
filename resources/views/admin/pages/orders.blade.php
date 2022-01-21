@@ -19,8 +19,10 @@
               <thead>
                 <tr>
                   <th>Id</th>
-                  <th>Customer</th>
+                  <th>Name</th>
+                  <th>Email</th>
                   <th>Address</th>
+                  <th>Mobile</th>
                   <th>Products</th>
                   <th>Amount</th>
                 </tr>
@@ -30,8 +32,10 @@
                   @foreach($orders as $order)
                     <tr>
                       <td>{{$cnt}}</td>
-                      <td>{{$order[2]->firstname}} {{$order[2]->lastname}}</td>
-                      <td>{{$order[0]->address}}</td>
+                      <td>{{$order[0]->name}} </td>
+                      <td>{{$order[0]->email}} </td>
+                      <td>Address: {{$order[0]->address}} <br> State: {{$order[0]->state}} <br> City: {{$order[0]->city}} <br> Pincode: {{$order[0]->pincode}}</td>
+                      <td>{{$order[0]->mobile}} </td>
                       <td> 
                         <ul>
                           @foreach($order[1] as $orderP)
@@ -41,7 +45,7 @@
                           @endforeach
                         </ul>                        
                       </td>
-                      <td>{{$order[0]->amount}}</td>
+                      <td>&#8377; {{$order[0]->amount}}</td>
                     </tr>
                     <?php $cnt++?>
                   @endforeach
