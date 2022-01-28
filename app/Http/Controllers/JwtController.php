@@ -22,6 +22,7 @@ use App\Models\UserAddress;
 use App\Models\Wishlist;
 use App\Mail\registerMailToUser;
 use App\Mail\registerMailToAdmin;
+use App\Mail\contactMailToAdmin;
 use App\Mail\orderMailToUser;
 use App\Mail\orderMailToAdmin;
 use Illuminate\Support\Facades\Mail; 
@@ -86,9 +87,9 @@ class JwtController extends Controller
     }
     public function contact(Request $request){
         $validator=Validator::make($request->all(),[
-            'name'=>'required|min:2|max:10|alpha',
-            'email'=>'required|unique:contact_us|email',
-            'mobile'=>'required|numeric|unique:contact_us',
+            'name'=>'required|min:2|max:20',
+            'email'=>'required|email',
+            'mobile'=>'required|numeric',
             'message'=>'required|min:10|max:255',
         ]);
         if($validator->fails()){
@@ -101,6 +102,7 @@ class JwtController extends Controller
                 'mobile'=>$request->mobile,
                 'message'=>$request->message,
             ]);
+            Mail::to('admin@gmail.com')->send(new contactMailToAdmin($request->all()));
             return response()->json([
                 'error'=>1,
                 'contact'=>$contact
@@ -350,7 +352,7 @@ class JwtController extends Controller
             'user_id'=>'required',
             'address'=>'required',
             'fullname'=>'required',
-            'email'=>'required|email|unique:user_addresses',
+            'email'=>'required|email',
             'state'=>'required',
             'mobile'=>'required',
             'pincode'=>'required',
@@ -409,8 +411,12 @@ class JwtController extends Controller
             $pro=Order::join('user_addresses','user_addresses.id','=','orders.address_id')->
     join('order_products','order_products.order_id','=','orders.id')->join('products','products.id','=','order_products.product_id')
     ->first();
+    // return response()->json([
+        
+    //     'pro'=>$pro
+    // ],200);
             Mail::to($userMail)->send(new orderMailToUser($pro));
-            // Mail::to('admin@gmail.com')->send(new orderMailToAdmin($pro));
+            Mail::to('admin@gmail.com')->send(new orderMailToAdmin($pro));
             return response()->json([
                 'error'=>0,
                 'orderproduct'=>$orderproduct,

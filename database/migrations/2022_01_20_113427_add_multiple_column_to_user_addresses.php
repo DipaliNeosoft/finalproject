@@ -15,11 +15,11 @@ class AddMultipleColumnToUserAddresses extends Migration
     {
         Schema::table('user_addresses', function (Blueprint $table) {
             $table->string('fullname',255)->nullable();
-            $table->string('email',320)->unique();
+            $table->string('email',320);
             $table->string('state',100)->nullable();
             $table->string('city',100)->nullable();
             $table->bigInteger('pincode')->nullable();
-            $table->bigInteger('mobile')->unique();
+            $table->bigInteger('mobile');
 
         });
     }
