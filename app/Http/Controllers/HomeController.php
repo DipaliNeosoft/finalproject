@@ -38,11 +38,10 @@ class HomeController extends Controller
         $orders=Order::join('user_addresses','orders.address_id','=','user_addresses.id')->select('orders.id as oid','orders.amount as amount','user_addresses.*')->get();
         foreach($orders as $o){
             $opdata=OrderProduct::join('products','order_products.product_id','=','products.id')->where('order_id',$o->oid)->get();
-            $user=User::where('id',$o->user_id)->first();
             foreach($opdata as $op){
                 $orderPro[]=Product::where('id',$op->product_id)->first();
             }
-            $products[]=[$o,$orderPro,$user];
+            $products[]=[$o,$orderPro];
             $orderPro=[];
         }
         return view('admin.pages.orders',['orders'=>$products]);
@@ -91,7 +90,6 @@ class HomeController extends Controller
     public function exportOrderCsv(Request $request)
     {
    $fileName = 'Orders.csv';
-//    $tasks=Order::join('user_addresses','orders.address_id','=','user_addresses.id')->get();
   $tasks=Order::join('user_addresses','user_addresses.id','=','orders.address_id')->
     join('order_products','order_products.order_id','=','orders.id')
     ->get();

@@ -32,7 +32,7 @@
                   @foreach($orders as $order)
                     <tr>
                       <td>{{$cnt}}</td>
-                      <td>{{$order[0]->name}} </td>
+                      <td>{{$order[0]->fullname}} </td>
                       <td>{{$order[0]->email}} </td>
                       <td>Address: {{$order[0]->address}} <br> State: {{$order[0]->state}} <br> City: {{$order[0]->city}} <br> Pincode: {{$order[0]->pincode}}</td>
                       <td>{{$order[0]->mobile}} </td>
