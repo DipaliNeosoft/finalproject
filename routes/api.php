@@ -28,3 +28,5 @@ use App\Http\Controllers\JwtController;
     Route::get('wishlist/{id}',[JwtController::class,'wishList']);
     Route::post('wishlist',[JwtController::class,'storeWishlist']);
     Route::delete('wishlist/{id}',[JwtController::class,'destroyWishlist']);
+    Route::post('subscribe',[JwtController::class,'subscribe']);
+

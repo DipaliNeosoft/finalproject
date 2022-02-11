@@ -26,6 +26,7 @@ use App\Mail\contactMailToAdmin;
 use App\Mail\orderMailToUser;
 use App\Mail\orderMailToAdmin;
 use Illuminate\Support\Facades\Mail; 
+use Newsletter;
 
 
 use Illuminate\Support\Facades\Hash;
@@ -34,7 +35,7 @@ class JwtController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api',['except'=>['login','register','contact','banner','category','product','coupon','show','productdetails','cms','cmsById','wishList','storeWishlist','destroyWishlist']]);
+        $this->middleware('auth:api',['except'=>['login','register','contact','banner','category','product','coupon','show','productdetails','cms','cmsById','wishList','storeWishlist','destroyWishlist','subscribe']]);
     }
     public function register(Request $request){
         $validator=Validator::make($request->all(),[
@@ -107,6 +108,15 @@ class JwtController extends Controller
                 'error'=>1,
                 'contact'=>$contact
             ]);
+        }
+    }
+    public function subscribe(Request $request)
+    {
+        if (Newsletter::isSubscribed($request->subscriber_email)) {
+            return response()->json(["err" => 1, "message" => "you already subscribed"]);
+        } else {
+            Newsletter::subscribe($request->subscriber_email);
+            return response()->json(["err" => 0, "message" => "Thank you for subscribing. you will get all notifications."]);
         }
     }
     public function banner()
